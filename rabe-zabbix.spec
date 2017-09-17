@@ -29,8 +29,6 @@ Summary:       RaBe Zabbix scripts and configs
 License:       AGPLv3
 Source:        rabe-zabbix-%{version}.tar.gz
 
-BuildArch:     noarch
-
 Requires:      zabbix-agent
 # requires for selinux packaging, see https://fedoraproject.org/wiki/SELinux_Policy_Modules_Packaging_Draft
 BuildRequires: checkpolicy, selinux-policy-devel, /usr/share/selinux/devel/policyhelp
