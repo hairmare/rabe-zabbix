@@ -23,21 +23,18 @@
 #
 
 Name:          rabe-zabbix
-Version:       0.3.1
+Version:       0.4.1
 Release:       0
 Summary:       RaBe Zabbix scripts and configs
 License:       AGPLv3
-Source:        rabe-zabbix-%{version}.tar.gz
+Source0:       https://github.com/radiorabe/rabe-zabbix/archive/refs/tags/%{version}.tar.gz?#%{name}-%{version}.tar.gz
 
 BuildArch:     noarch
 
 Requires:      zabbix-agent
 # requires for selinux packaging, see https://fedoraproject.org/wiki/SELinux_Policy_Modules_Packaging_Draft
-BuildRequires: checkpolicy, selinux-policy-devel, /usr/share/selinux/devel/policyhelp
-%{!?_selinux_policy_version: %global _selinux_policy_version %(sed -e 's,.*selinux-policy-\\([^/]*\\)/.*,\\1,' /usr/share/selinux/devel/policyhelp 2>/dev/null)}
-%if "%{_selinux_policy_version}" != ""
+BuildRequires: checkpolicy, selinux-policy-devel
 Requires:      selinux-policy >= %{_selinux_policy_version}
-%endif
 Requires(post):   /usr/sbin/semodule, /sbin/restorecon, /sbin/fixfiles
 Requires(postun): /usr/sbin/semodule, /sbin/restorecon, /sbin/fixfiles
 
