@@ -24,10 +24,10 @@
 
 Name:          rabe-zabbix
 Version:       0.4.1
-Release:       0
+Release:       1
 Summary:       RaBe Zabbix scripts and configs
 License:       AGPLv3
-Source0:       https://github.com/radiorabe/rabe-zabbix/archive/refs/tags/%{version}.tar.gz?#%{name}-%{version}.tar.gz
+Source:        https://github.com/radiorabe/rabe-zabbix/archive/refs/tags/%{name}.tar.gz#/%{name}-%{version}.tar.gz
 
 BuildArch:     noarch
 
@@ -72,3 +72,8 @@ fi
 %config %{_sysconfdir}/zabbix/zabbix_agentd.d/*.conf
 %config %{_sysconfdir}/sudoers.d/*
 %{_libexecdir}/zabbix/rabe/*
+
+%changelog
+* Sun Dec 18 2022 Lucas <hairmare@rabe.ch> - 0.4.1-1
+- Update spec for copy/el9 compat and to match current version
+- new package built with tito
