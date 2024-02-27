@@ -6,25 +6,68 @@ Hi and thanks for wanting to contribute to the RaBe Zabbix templates.
 * [Start a discussion](https://github.com/radiorabe/rabe-zabbix/discussions) if you need general help
 * Or check out the conventions and documentation in this file to add templates
 
-Keep in mind that this repository is the source of truth for our Zabbix installation, hence we tend to be cautious when merging changes as to now have them impact our Zabbix installation.
+Keep in mind that this repository is the source of truth for our Zabbix installation, hence we tend to be cautious when merging changes as to not have them impact our Zabbix installation.
 
 ## Conventions
 
-🚧 Refactor underway! These conventions were written with Zabbix 3.0 in mind. 🚧
+### Tagging conventions
+
+The templates make heavy use of tags which are used for filtering but are also available for
+event correlation.
+
+* Tags are lowercase and contain `[a-z`] in their name
+* Their values are lowercase and only contain `[a-z-]` in their value
+* Bare tags (without a value) are possible and these docs indicate where their use is applicable
+
+Some common tags are
+* `class`
+* `target`
 
 ### Template conventions
 
-* Use active mode for zabbix agent items by default
-* Use an update interval of 300 seconds (5 minutes) by default
-* Create at least one unique application per app, ipmi and snmp template
-* Use macros whenever possible and feasible, prefix them with a unique per template prefix
+* Use active mode for Zabbix agent items by default
+* Create dashboards for templates where applicable
+* Use macros whenever possible and feasible, prefix them with a unique per template prefix using dot notation (e.g. `TEMPLATE.SERVICE.VALUE`)
+* Assign tags from the following table
 
-### App specific conventions
+| Group | `class` | `target` |
+| ----- | ------- | -------- |
+| Stack | `class: stack` | `` |
+| Templates | `class: <class>` | `target: <shortname>` |
+| Templates/Applications | `class: software` | `target: <shortname>` |
 
-* Apps may contain configuration snippets in a `userparameters/` subdir.
-* SELinux policy modules for an app are in the `selinux/` subdir. They are prefixed with "rabezbx" to help differentiate them from system policy.
+### Stack template conventions
+
+* Stacks may be stacked onto each other
+* Items in stacks may not overlap in some cases
+* Stack templates should not define macros, but they may override them
+
+### Item conventions
+
+* When possible, read several values in a parseable format (e.g. json) as a raw item and create dependent items
+* Use meta and discovery items where possible, i.e. prefer to read `proc.get` once as raw item instead of multiple other `proc.*` items
+* Prefix item keys `rabe.<shortname>` to ensure they do not conflict with other templates
+* Raw items should be tagged with `component: raw` and have an update interval of 60 seconds (`1m`) and no history
+* Dependant items should use a heartbeat processor with an interval of 300 seconds (`5m`) by default and 7 days (`7d`) of history, please use a higher hearbeat where it makes sense
+* Dependant items need at least one unique `component: <str>` tag that is specific to the template type, known conventions are in the following table
+
+| Type | `component` |
+| ---- | ----------- |
+| Uptime | `component: health` |
+| Status | `component: health` |
+| `systemd.unit.*` | `component: systemd` |
+
+### Application specific conventions
+
+* Applications should advertise their needed configuration (e.g. `AllowKey` requirements) in their description
+* For larger Application environments that involve multiple parent processes, we create multiple templates
+* Raw items should not use any elevated permissions (e.g. by using dbus functionality instead of low level access)
+* If available they should use native appliction metric features like Prometheus endpoints or JSON status command lines
+* For HTTP checks, such endpoints should be secured so only the Zabbix Server can access the metrics
 
 ### IPMI specific conventions
+
+🚧 Refactor underway! These conventions were written with Zabbix 3.0 in mind. 🚧
 
 * Name server or motherboard templates according to `IPMI <VENDOR>
   <PRODUCT-NAME>`, for example `Template IPMI Supermicro SSG-6048R-E1CR24N`
@@ -65,6 +108,8 @@ Keep in mind that this repository is the source of truth for our Zabbix installa
   Threshold Sensors` template.
 
 ### SNMP specific conventions
+
+🚧 Refactor underway! These conventions were written with Zabbix 3.0 in mind. 🚧
 
 * Name SNMP templates according to `Template SNMPv<SNMP-VERSION> <NAME>`, for example
   `Template SNMPv2 Bridge`
